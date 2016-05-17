@@ -25,9 +25,14 @@ public class HuffmanCode {
 	    }
 	}
 	
-	public void encode(){
+	public String encode(String value){
+		String encodedString = "";
 		treeBuild();
-		tableBuild(pqueue.poll(), "");
+		tableBuild(pqueue.poll(), "");	
+		for(int i = 0; i < value.length(); ++i){
+			encodedString += (String) table.get(String.valueOf(value.charAt(i)));
+		}		
+		return encodedString;
 	}
 	private void treeBuild(){
 		if(pqueue.size() == 1) return;
@@ -48,13 +53,37 @@ public class HuffmanCode {
 	private void tableBuild(Node parent, String value){
 		if(parent.left == null && parent.right == null){
 			table.put(parent.c, value);
-			System.out.println(parent.c + "   " + value);
 			return;
 		}
 		tableBuild(parent.left, value + "0");
 		tableBuild(parent.right, value + "1");
 	}
 	
+	public String decode(String value){
+		String decodedString = "";
+		String subString = "", key ="";
+		for(int i = 0; i < value.length(); ++i){
+			subString += value.substring(i, i+1);
+			key = getKey(subString);
+			if(key.equals(""))continue;
+			else{
+				decodedString += key;
+				subString = "";
+			}
+		}
+		return decodedString;
+	}
+	
+	private String getKey(String value){
+		String key = "";
+        for(Map.Entry<String, String> entry : table.entrySet()) {
+            if((value == null && entry.getValue() == null) || (value != null && value.equals(entry.getValue()))) {
+                key = (String)entry.getKey();
+                break;
+            }
+        }
+        return key;
+	}
 	private class Node{
 		int freq;
 		String c;
